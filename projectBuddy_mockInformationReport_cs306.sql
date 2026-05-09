@@ -33,15 +33,7 @@ SELECT
     p.title,
     p.project_status,
     CONCAT(up.first_name, ' ', up.last_name) AS owner_name,
-    p.team_size AS max_team_size,
-    COUNT(DISTINCT pm.id) AS current_members,
-    COUNT(DISTINCT msg.id) AS total_messages,
-    COUNT(DISTINCT ap.id) AS total_applications,
-    SUM(CASE WHEN ap.status = 'pending'  THEN 1 ELSE 0 END) AS pending_apps,
-    SUM(CASE WHEN ap.status = 'accepted' THEN 1 ELSE 0 END) AS accepted_apps,
-    SUM(CASE WHEN ap.status = 'rejected' THEN 1 ELSE 0 END) AS rejected_apps,
     ROUND(AVG(f.rating), 2) AS avg_team_rating,
-    -- Project_settings join (1:1) to show visibility flag
     ps.is_public,
     DATEDIFF(p.deadline, CURDATE()) AS days_until_deadline
 FROM Projects p
@@ -55,8 +47,7 @@ LEFT JOIN  Applications     ap  ON ap.project_id  = p.id
 LEFT JOIN  Feedback         f   ON f.project_id   = p.id
 GROUP BY
     p.id, p.title, p.project_status,
-    up.first_name, up.last_name,
-    p.team_size, ps.is_public, p.deadline
+    up.first_name, up.last_name, p.deadline
 ORDER BY days_until_deadline ASC;
 
 -- REPORT 3: Skill Gap Analysis — Demand vs Supply
